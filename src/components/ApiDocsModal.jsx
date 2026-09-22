@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Code2, Play, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { X, Play, Code2 } from 'lucide-react';
 
 export default function ApiDocsModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -12,13 +12,13 @@ export default function ApiDocsModal({ isOpen, onClose }) {
     {
       method: 'GET',
       path: '/api/activities',
-      desc: 'Query activity logs. Supports filters: ?type=car, ?startDate=2026-09-01, ?endDate=2026-09-22, ?search=commute',
+      desc: 'Query activity logs with filters (?type=car, ?startDate, ?endDate, ?search)',
       example: '/api/activities?type=car'
     },
     {
       method: 'POST',
       path: '/api/activities',
-      desc: 'Log new activity. Computes CO2 factor automatically based on brief specification.',
+      desc: 'Log a new carbon activity entry.',
       example: '/api/activities',
       body: { type: 'car', quantity: 15, notes: 'Interactive API sandbox test' }
     },
@@ -38,7 +38,7 @@ export default function ApiDocsModal({ isOpen, onClose }) {
     {
       method: 'GET',
       path: '/api/summary',
-      desc: 'Get aggregated metrics: total CO2, weekly total, target status, category breakdown, and DP1 nudge status.',
+      desc: 'Get aggregated stats: total CO2, weekly total, target status, category breakdown, nudge state.',
       example: '/api/summary'
     },
     {
@@ -80,124 +80,76 @@ export default function ApiDocsModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-4xl rounded-2xl p-6 border border-emerald-500/30 shadow-2xl shadow-emerald-500/10 space-y-5 max-h-[90vh] flex flex-col">
+    <div className="modal-bg">
+      <div className="modal-box" style={{ maxWidth: 800 }}>
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Code2 className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-extrabold text-white">Standard REST API & Interactive Sandbox</h3>
-              <p className="text-xs text-slate-400">Test API endpoints directly inside the browser</p>
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Code2 size={20} color="var(--green)" />
+            <h3 style={{ fontSize: 18, fontWeight: 800, margin: 0, color: 'var(--dark)' }}>
+              Standard REST API & Interactive Sandbox
+            </h3>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: 4 }}><X size={18} /></button>
         </div>
 
-        {/* Content Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 overflow-hidden">
+        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 20, marginBottom: 20 }}>
           
-          {/* Endpoint List Sidebar */}
-          <div className="lg:col-span-5 space-y-2 overflow-y-auto pr-1">
-            {endpoints.map((ep, idx) => {
-              const isSelected = activeEndpointIndex === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setActiveEndpointIndex(idx);
-                    setApiResponse(null);
-                  }}
-                  className={`w-full p-3 rounded-xl border transition-all text-left flex items-center justify-between cursor-pointer ${
-                    isSelected
-                      ? 'bg-emerald-950/40 border-emerald-500/40 ring-1 ring-emerald-500/30 text-white'
-                      : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/60 text-slate-400'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
-                      ep.method === 'GET' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                      ep.method === 'POST' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                      'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                    }`}>
-                      {ep.method}
-                    </span>
-                    <code className="text-xs font-mono font-bold">{ep.path}</code>
-                  </div>
-                </button>
-              );
-            })}
+          {/* Endpoint Sidebar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 380, overflowY: 'auto' }}>
+            {endpoints.map((ep, idx) => (
+              <button
+                key={idx}
+                onClick={() => { setActiveEndpointIndex(idx); setApiResponse(null); }}
+                className={`type-pill ${activeEndpointIndex === idx ? 'active' : ''}`}
+                style={{ padding: '8px 12px', fontSize: 11 }}
+              >
+                <span className="chip-green" style={{ fontSize: 9, padding: '2px 6px', marginRight: 6 }}>{ep.method}</span>
+                <code>{ep.path}</code>
+              </button>
+            ))}
           </div>
 
-          {/* Interactive Sandbox Panel */}
-          <div className="lg:col-span-7 flex flex-col justify-between p-4 rounded-xl bg-slate-950 border border-slate-800 overflow-y-auto space-y-4">
+          {/* Sandbox content */}
+          <div style={{ padding: 20, borderRadius: 12, background: 'var(--dark-card)', color: '#FFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-white font-mono">{currentEp.method} {currentEp.path}</span>
-                <button
-                  onClick={handleTestEndpoint}
-                  disabled={loading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <Play className="w-3.5 h-3.5" />
-                  <span>{loading ? 'Running...' : 'Execute Request'}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 800 }}>{currentEp.method} {currentEp.path}</span>
+                <button onClick={handleTestEndpoint} disabled={loading} className="btn-green" style={{ fontSize: 11, padding: '6px 14px' }}>
+                  <Play size={12} /> {loading ? 'Testing...' : 'Execute'}
                 </button>
               </div>
-              <p className="text-xs text-slate-400">{currentEp.desc}</p>
-            </div>
+              <p style={{ fontSize: 12, opacity: 0.7, margin: '0 0 12px' }}>{currentEp.desc}</p>
 
-            {/* Request Body Info */}
-            {currentEp.body && (
-              <div>
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Request Payload</span>
-                <pre className="p-2.5 rounded-lg bg-slate-900 text-[11px] font-mono text-amber-300 border border-slate-800">
-                  {JSON.stringify(currentEp.body, null, 2)}
-                </pre>
-              </div>
-            )}
-
-            {/* Live Response Output */}
-            <div className="flex-1 min-h-[160px]">
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2 mb-1">
-                <span>Live API Response</span>
-                {apiResponse && (
-                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${apiResponse.ok ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                    {apiResponse.status} {apiResponse.ok ? 'OK' : 'Error'}
-                  </span>
-                )}
-              </span>
-
-              {apiResponse ? (
-                <pre className="p-3 rounded-xl bg-slate-900/90 text-[11px] font-mono text-emerald-400 border border-emerald-500/20 overflow-x-auto max-h-56">
-                  {JSON.stringify(apiResponse.data, null, 2)}
-                </pre>
-              ) : (
-                <div className="h-36 rounded-xl bg-slate-900/40 border border-slate-800 flex items-center justify-center text-xs text-slate-500 italic">
-                  Click "Execute Request" to test endpoint live.
+              {currentEp.body && (
+                <div style={{ marginBottom: 12 }}>
+                  <span style={{ fontSize: 10, uppercase: true, opacity: 0.6 }}>Payload</span>
+                  <pre style={{ fontSize: 11, background: 'rgba(255,255,255,0.06)', padding: 10, borderRadius: 6, margin: '4px 0 0' }}>
+                    {JSON.stringify(currentEp.body, null, 2)}
+                  </pre>
                 </div>
               )}
             </div>
 
+            <div>
+              <span style={{ fontSize: 10, uppercase: true, opacity: 0.6 }}>Live Response</span>
+              {apiResponse ? (
+                <pre style={{ fontSize: 11, background: 'rgba(255,255,255,0.06)', color: 'var(--green-light)', padding: 12, borderRadius: 6, margin: '4px 0 0', maxHeight: 180, overflowY: 'auto' }}>
+                  {JSON.stringify(apiResponse.data, null, 2)}
+                </pre>
+              ) : (
+                <div style={{ padding: 20, textAlign: 'center', fontSize: 12, opacity: 0.5, fontStyle: 'italic' }}>
+                  Click Execute to test API response.
+                </div>
+              )}
+            </div>
           </div>
 
         </div>
 
-        {/* Footer */}
-        <div className="pt-3 border-t border-slate-800 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
-          >
-            Close Sandbox
-          </button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={onClose} className="btn-outline">Close Sandbox</button>
         </div>
 
       </div>

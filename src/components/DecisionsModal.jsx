@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, BookOpen, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import { X, BookOpen, CheckCircle2 } from 'lucide-react';
 import { fetchDecisions } from '../services/api';
 
 export default function DecisionsModal({ isOpen, onClose }) {
@@ -21,52 +21,40 @@ export default function DecisionsModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="glass-panel w-full max-w-3xl rounded-2xl p-6 border border-emerald-500/30 shadow-2xl shadow-emerald-500/10 space-y-5 max-h-[90vh] flex flex-col">
+    <div className="modal-bg">
+      <div className="modal-box" style={{ maxWidth: 680 }}>
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-extrabold text-white">DECISIONS.md Viewer</h3>
-              <p className="text-xs text-slate-400">Architectural & UX choices for Decision Points 1, 2, and 3</p>
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <BookOpen size={20} color="var(--green)" />
+            <h3 style={{ fontSize: 18, fontWeight: 800, margin: 0, color: 'var(--dark)' }}>
+              DECISIONS.md Viewer
+            </h3>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: 4 }}><X size={18} /></button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+        <div style={{ maxHeight: 420, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
           {loading ? (
-            <div className="p-8 text-center text-slate-400 text-xs">Loading decision points...</div>
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)', fontSize: 12 }}>Loading decisions...</div>
           ) : (
             decisions.map((dp) => (
-              <div key={dp.id} className="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
-                      {dp.id}
-                    </span>
-                    <h4 className="text-sm font-extrabold text-white">{dp.name}</h4>
-                  </div>
+              <div key={dp.id} className="card" style={{ padding: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                  <span className="chip-green" style={{ fontSize: 10 }}>{dp.id}</span>
+                  <h4 style={{ fontSize: 14, fontWeight: 800, color: 'var(--dark)', margin: 0 }}>{dp.name}</h4>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs text-emerald-300 font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div style={{ padding: 12, borderRadius: 8, background: 'var(--cream-dark)', display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: 'var(--dark)', marginBottom: 12 }}>
+                  <CheckCircle2 size={16} color="var(--green)" />
                   <span>Choice: {dp.choice}</span>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Rationale</h5>
-                  <p className="text-xs text-slate-200 leading-relaxed bg-slate-900/50 p-3 rounded-lg border border-slate-800/80">
+                  <span className="field-label" style={{ marginBottom: 4 }}>Rationale</span>
+                  <p style={{ fontSize: 12, color: 'var(--text-body)', lineHeight: 1.5, margin: 0 }}>
                     {dp.rationale}
                   </p>
                 </div>
@@ -75,14 +63,8 @@ export default function DecisionsModal({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="pt-3 border-t border-slate-800 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white"
-          >
-            Close Viewer
-          </button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={onClose} className="btn-dark">Close Viewer</button>
         </div>
 
       </div>

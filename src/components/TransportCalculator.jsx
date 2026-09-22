@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Compass, Car, Bus, Plane, PlusCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { Compass, Car, Bus, Plane, PlusCircle } from 'lucide-react';
 
 export default function TransportCalculator({ onLogActivity }) {
   const [distanceKm, setDistanceKm] = useState(25);
@@ -37,27 +37,22 @@ export default function TransportCalculator({ onLogActivity }) {
   };
 
   return (
-    <div className="glass-panel p-6 rounded-2xl border border-blue-500/20 space-y-5">
-      <div className="flex items-center justify-between">
+    <div className="card" style={{ padding: 32 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-            <Compass className="w-5 h-5 text-blue-400" />
-            Trip & Transport Route Comparison Tool
-          </h2>
-          <p className="text-xs text-slate-400">Compare emissions across transport modes & log trip directly</p>
+          <p className="section-label" style={{ margin: 0 }}>Route Comparison</p>
+          <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--dark)', margin: '4px 0 0' }}>Transport Emissions Calculator</h3>
         </div>
-        <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
-          Route Calculator
+        <span className="chip-green" style={{ fontSize: 11 }}>
+          0.08 - 0.25 kg/km
         </span>
       </div>
 
-      {/* Distance Input */}
-      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-            Trip Distance (km)
-          </label>
-          <span className="text-sm font-black text-blue-400 font-mono">{distanceKm} km</span>
+      {/* Slider */}
+      <div style={{ padding: 20, borderRadius: 12, background: 'var(--cream-dark)', marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <label className="field-label" style={{ margin: 0 }}>Distance (km)</label>
+          <span style={{ fontSize: 18, fontWeight: 900, color: 'var(--dark)' }}>{distanceKm} km</span>
         </div>
         <input
           type="range"
@@ -66,73 +61,62 @@ export default function TransportCalculator({ onLogActivity }) {
           step="1"
           value={distanceKm}
           onChange={(e) => setDistanceKm(parseInt(e.target.value) || 1)}
-          className="w-full accent-blue-500 cursor-pointer"
+          style={{ width: '100%' }}
         />
       </div>
 
-      {/* Side by Side Mode Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Mode comparison grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
         
-        {/* Car */}
-        <div 
+        <div
           onClick={() => setSelectedMode('car')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
-            selectedMode === 'car' ? 'bg-blue-950/40 border-blue-500/50 ring-1 ring-blue-500/30' : 'bg-slate-900/60 border-slate-800'
-          }`}
+          className={`card ${selectedMode === 'car' ? 'card-dark' : ''}`}
+          style={{ cursor: 'pointer', padding: 20 }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <Car className="w-5 h-5 text-blue-400" />
-            <span className="text-[10px] font-mono text-slate-400">0.20 kg/km</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <Car size={20} color={selectedMode === 'car' ? '#FFF' : 'var(--dark)'} />
+            <span style={{ fontSize: 10, opacity: 0.7 }}>0.20 kg/km</span>
           </div>
-          <h4 className="text-xs font-bold text-white mb-1">Solo Driving</h4>
-          <p className="text-xl font-black text-blue-400 font-mono">{carCO2} kg CO₂</p>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Solo Drive</div>
+          <div style={{ fontSize: 24, fontWeight: 900 }}>{carCO2} <span style={{ fontSize: 12, fontWeight: 500 }}>kg</span></div>
         </div>
 
-        {/* Bus */}
-        <div 
+        <div
           onClick={() => setSelectedMode('bus')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
-            selectedMode === 'bus' ? 'bg-cyan-950/40 border-cyan-500/50 ring-1 ring-cyan-500/30' : 'bg-slate-900/60 border-slate-800'
-          }`}
+          className={`card ${selectedMode === 'bus' ? 'card-dark' : ''}`}
+          style={{ cursor: 'pointer', padding: 20 }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <Bus className="w-5 h-5 text-cyan-400" />
-            <span className="text-[10px] font-mono text-slate-400">0.08 kg/km</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <Bus size={20} color={selectedMode === 'bus' ? '#FFF' : 'var(--green)'} />
+            <span style={{ fontSize: 10, opacity: 0.7 }}>0.08 kg/km</span>
           </div>
-          <h4 className="text-xs font-bold text-white mb-1">Transit Bus</h4>
-          <p className="text-xl font-black text-cyan-400 font-mono">{busCO2} kg CO₂</p>
-          <p className="text-[10px] text-emerald-400 font-semibold mt-1">Save {busSavings} kg vs Car!</p>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Transit Bus</div>
+          <div style={{ fontSize: 24, fontWeight: 900 }}>{busCO2} <span style={{ fontSize: 12, fontWeight: 500 }}>kg</span></div>
+          <div style={{ fontSize: 11, color: selectedMode === 'bus' ? '#A7F3D0' : 'var(--green)', fontWeight: 700, marginTop: 4 }}>
+            Save {busSavings} kg vs Car!
+          </div>
         </div>
 
-        {/* Flight */}
-        <div 
+        <div
           onClick={() => setSelectedMode('flight')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
-            selectedMode === 'flight' ? 'bg-purple-950/40 border-purple-500/50 ring-1 ring-purple-500/30' : 'bg-slate-900/60 border-slate-800'
-          }`}
+          className={`card ${selectedMode === 'flight' ? 'card-dark' : ''}`}
+          style={{ cursor: 'pointer', padding: 20 }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <Plane className="w-5 h-5 text-purple-400" />
-            <span className="text-[10px] font-mono text-slate-400">0.25 kg/km</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <Plane size={20} color={selectedMode === 'flight' ? '#FFF' : 'var(--dark)'} />
+            <span style={{ fontSize: 10, opacity: 0.7 }}>0.25 kg/km</span>
           </div>
-          <h4 className="text-xs font-bold text-white mb-1">Flight</h4>
-          <p className="text-xl font-black text-purple-400 font-mono">{flightCO2} kg CO₂</p>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Flight</div>
+          <div style={{ fontSize: 24, fontWeight: 900 }}>{flightCO2} <span style={{ fontSize: 12, fontWeight: 500 }}>kg</span></div>
         </div>
 
       </div>
 
-      {/* Log Selection Button */}
-      <div className="pt-2 flex justify-end">
-        <button
-          onClick={handleLog}
-          disabled={loading}
-          className="px-6 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 text-white shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>{loading ? 'Logging Trip...' : `Log ${currentSelection.label} (${currentSelection.co2} kg CO₂)`}</span>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button onClick={handleLog} disabled={loading} className="btn-dark">
+          {loading ? 'Logging Trip...' : `Log ${currentSelection.label} (${currentSelection.co2} kg CO₂)`}
         </button>
       </div>
-
     </div>
   );
 }

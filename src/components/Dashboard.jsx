@@ -2,17 +2,10 @@ import React from 'react';
 import { 
   PieChart as PieIcon, 
   BarChart3, 
-  Car, 
-  Bus, 
-  Plane, 
-  Zap, 
-  Utensils, 
-  Flame,
   TreePine, 
   Smartphone, 
-  Compass,
-  AlertTriangle,
-  Info
+  Car, 
+  Info 
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -28,21 +21,12 @@ import {
 } from 'recharts';
 
 const CATEGORY_COLORS = {
-  car: '#3b82f6',        // Blue
-  bus: '#06b6d4',        // Cyan
-  flight: '#8b5cf6',     // Purple
-  electricity: '#eab308', // Amber
-  'veg meal': '#22c55e',  // Green
-  'non-veg meal': '#ef4444' // Red
-};
-
-const CATEGORY_ICONS = {
-  car: Car,
-  bus: Bus,
-  flight: Plane,
-  electricity: Zap,
-  'veg meal': Utensils,
-  'non-veg meal': Flame
+  car: '#1A1A1A',
+  bus: '#2D6A4F',
+  flight: '#4F46E5',
+  electricity: '#D97706',
+  'veg meal': '#52B788',
+  'non-veg meal': '#E63946'
 };
 
 export default function Dashboard({ summary, activities }) {
@@ -56,16 +40,16 @@ export default function Dashboard({ summary, activities }) {
     equivalencies
   } = summary;
 
-  // Prepare data for Pie Chart
+  // Prepare pie data
   const pieData = Object.entries(categoryBreakdown)
     .filter(([_, val]) => val > 0)
     .map(([key, value]) => ({
       name: key.toUpperCase(),
-      value,
-      color: CATEGORY_COLORS[key] || '#94a3b8'
+      value: parseFloat(value.toFixed(2)),
+      color: CATEGORY_COLORS[key] || '#748C94'
     }));
 
-  // Prepare data for Daily Trend Bar Chart (last 7 days)
+  // Daily trend bar chart (last 7 days)
   const daysMap = {};
   activities.forEach(a => {
     const d = a.date;
@@ -81,195 +65,178 @@ export default function Dashboard({ summary, activities }) {
     }));
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       
-      {/* Top Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 4 Stat Metric Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
         
-        {/* Total CO2 Card */}
-        <div className="glass-panel p-5 rounded-2xl glass-panel-hover relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total CO₂ Logged</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <TreePine className="w-4 h-4" />
-            </div>
+        <div className="card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--text-muted)' }}>
+              Total CO₂ Logged
+            </span>
+            <TreePine size={16} color="var(--green)" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white tracking-tight">{totalCO2.toFixed(1)}</span>
-            <span className="text-sm font-semibold text-emerald-400">kg CO₂</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-1px', color: 'var(--dark)' }}>
+              {totalCO2.toFixed(1)}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)' }}>kg CO₂e</span>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Cumulative footprint from all activities</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8, margin: 0 }}>Cumulative lifetime emissions</p>
         </div>
 
-        {/* Weekly Footprint Card */}
-        <div className="glass-panel p-5 rounded-2xl glass-panel-hover relative overflow-hidden">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Weekly Footprint</span>
-            <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400">
-              <BarChart3 className="w-4 h-4" />
-            </div>
+        <div className="card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--text-muted)' }}>
+              This Week
+            </span>
+            <BarChart3 size={16} color="var(--dark)" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white tracking-tight">{weeklyCO2.toFixed(1)}</span>
-            <span className="text-sm font-medium text-slate-400">/ {weeklyTarget.toFixed(1)} kg</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-1px', color: 'var(--dark)' }}>
+              {weeklyCO2.toFixed(1)}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)' }}>/ {weeklyTarget} kg</span>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Current ISO week CO₂ total</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8, margin: 0 }}>Current week vs target limit</p>
         </div>
 
-        {/* Trees Needed Card */}
-        <div className="glass-panel p-5 rounded-2xl glass-panel-hover relative overflow-hidden">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tree Offset Needed</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <TreePine className="w-4 h-4" />
-            </div>
+        <div className="card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--text-muted)' }}>
+              Tree Absorption
+            </span>
+            <TreePine size={16} color="var(--green)" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-emerald-400 tracking-tight">{equivalencies.treesNeeded}</span>
-            <span className="text-sm font-semibold text-slate-300">Trees / year</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-1px', color: 'var(--green)' }}>
+              {equivalencies.treesNeeded}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--dark)' }}>trees / year</span>
           </div>
-          <p className="text-xs text-slate-400 mt-2">To absorb your logged carbon footprint</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8, margin: 0 }}>Trees required to absorb total log</p>
         </div>
 
-        {/* Phone Charges Equivalency Card */}
-        <div className="glass-panel p-5 rounded-2xl glass-panel-hover relative overflow-hidden">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Equivalent Energy</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
-              <Smartphone className="w-4 h-4" />
-            </div>
+        <div className="card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--text-muted)' }}>
+              Energy Equivalent
+            </span>
+            <Smartphone size={16} color="#d97706" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-amber-400 tracking-tight">{equivalencies.phoneCharges.toLocaleString()}</span>
-            <span className="text-sm font-semibold text-slate-300">Phone charges</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+            <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-1px', color: '#d97706' }}>
+              {equivalencies.phoneCharges.toLocaleString()}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--dark)' }}>recharges</span>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Equivalent smartphone battery recharges</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8, margin: 0 }}>Smartphone full battery charges</p>
         </div>
 
       </div>
 
-      {/* Visual Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Charts Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 24 }}>
         
-        {/* Donut Chart: Category Breakdown */}
-        <div className="glass-panel p-6 rounded-2xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <PieIcon className="w-4 h-4 text-emerald-400" />
-                Emissions by Category
-              </h3>
-              <p className="text-xs text-slate-400">Distribution across transport, food, and energy</p>
+        {/* Category Breakdown Pie Chart */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <PieIcon size={16} color="var(--green)" />
+              <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0, color: 'var(--dark)' }}>Category Breakdown</h3>
             </div>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Emissions proportion by activity type</p>
           </div>
 
           {pieData.length > 0 ? (
-            <div className="h-64 relative flex items-center justify-center">
+            <div style={{ height: 240, position: 'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
+                    innerRadius={65}
                     outerRadius={90}
                     paddingAngle={4}
                     dataKey="value"
                   >
                     {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#0f172a" strokeWidth={2} />
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#FFFFFF" strokeWidth={2} />
                     ))}
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: '#334155', 
-                      borderRadius: '12px',
-                      color: '#fff',
-                      fontSize: '12px'
+                      backgroundColor: '#1A1A1A', 
+                      borderRadius: '8px', 
+                      color: '#FFF', 
+                      fontSize: '12px',
+                      border: 'none',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
                     }} 
-                    formatter={(val) => [`${val.toFixed(2)} kg CO₂`, 'Emissions']}
+                    formatter={(val) => [`${val} kg CO₂`, 'Emissions']}
                   />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute text-center pointer-events-none">
-                <span className="text-xs text-slate-400 font-medium">Total</span>
-                <p className="text-lg font-bold text-white">{totalCO2.toFixed(1)} kg</p>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', margin: 0 }}>Total</p>
+                <p style={{ fontSize: 16, fontWeight: 900, color: 'var(--dark)', margin: 0 }}>{totalCO2.toFixed(1)} kg</p>
               </div>
             </div>
           ) : (
-            <div className="h-64 flex flex-col items-center justify-center text-slate-500 text-xs">
-              No activity logs recorded yet.
-            </div>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', padding: '40px 0' }}>No activity data logged yet.</p>
           )}
 
-          {/* Category Badges Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-800/80">
-            {Object.entries(categoryBreakdown).map(([cat, val]) => {
-              const Icon = CATEGORY_ICONS[cat] || Zap;
-              const color = CATEGORY_COLORS[cat];
-              return (
-                <div key={cat} className="flex items-center gap-2 p-2 rounded-xl bg-slate-900/40 border border-slate-800/60">
-                  <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ backgroundColor: `${color}20`, color }}>
-                    <Icon className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold text-slate-300 capitalize">{cat}</p>
-                    <p className="text-xs font-bold text-white">{val.toFixed(1)} <span className="text-[10px] text-slate-400 font-normal">kg</span></p>
-                  </div>
-                </div>
-              );
-            })}
+          {/* Legend */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+            {pieData.map(item => (
+              <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, color: 'var(--dark)' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: item.color }} />
+                {item.name}: {item.value} kg
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Bar Chart: Daily Emissions Trend */}
-        <div className="glass-panel p-6 rounded-2xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-teal-400" />
-                Daily Emissions Trend
-              </h3>
-              <p className="text-xs text-slate-400">Recent daily CO₂ output in kg</p>
+        {/* Daily Trend Bar Chart */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <BarChart3 size={16} color="var(--dark)" />
+              <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0, color: 'var(--dark)' }}>Daily Emissions Trend</h3>
             </div>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Logged CO₂ emissions over the last 7 days</p>
           </div>
 
           {barData.length > 0 ? (
-            <div className="h-64">
+            <div style={{ height: 240 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="date" stroke="#64748b" tick={{ fontSize: 11 }} />
-                  <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: '#334155', 
-                      borderRadius: '12px',
-                      color: '#fff',
-                      fontSize: '12px'
-                    }}
-                    formatter={(val) => [`${val} kg CO₂`, 'Daily Footprint']}
+                      backgroundColor: '#1A1A1A', 
+                      borderRadius: '8px', 
+                      color: '#FFF', 
+                      fontSize: '12px',
+                      border: 'none'
+                    }} 
+                    formatter={(val) => [`${val} kg CO₂`, 'Emissions']}
                   />
-                  <Bar dataKey="co2" fill="#10b981" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="co2" fill="#2D6A4F" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-64 flex flex-col items-center justify-center text-slate-500 text-xs">
-              No recent trend data.
-            </div>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', padding: '40px 0' }}>No daily trend data available.</p>
           )}
 
-          {/* Reference Emission Factors Banner */}
-          <div className="mt-4 p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
-            <Info className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-semibold text-emerald-400">Fixed Conversion Factors: </span>
-              Car (0.20 kg/km) • Bus (0.08 kg/km) • Flight (0.25 kg/km) • Electricity (0.80 kg/kWh) • Veg Meal (0.5 kg) • Non-veg Meal (2.0 kg).
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border)', fontSize: 11, color: 'var(--text-muted)' }}>
+            <span>Target daily average: ~{(weeklyTarget / 7).toFixed(1)} kg</span>
+            <span style={{ fontWeight: 700, color: 'var(--green)' }}>7-day window</span>
           </div>
         </div>
 

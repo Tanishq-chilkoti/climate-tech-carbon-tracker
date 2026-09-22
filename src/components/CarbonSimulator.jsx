@@ -1,55 +1,41 @@
 import React, { useState } from 'react';
-import { Sparkles, Sliders, TreePine, Flame, Car, Zap, ArrowRight, RefreshCw } from 'lucide-react';
+import { Sliders, Sparkles, RefreshCw } from 'lucide-react';
 
 export default function CarbonSimulator() {
-  const [vegSwaps, setVegSwaps] = useState(3); // 3 meals/wk swapped from non-veg (2.0 - 0.5 = 1.5kg saved/meal)
-  const [transitKm, setTransitKm] = useState(30); // 30 km car swapped to bus (0.20 - 0.08 = 0.12kg saved/km)
-  const [energySaved, setEnergySaved] = useState(10); // 10 kWh saved/wk (0.80kg saved/kWh)
+  const [vegSwaps, setVegSwaps] = useState(3);
+  const [transitKm, setTransitKm] = useState(30);
+  const [energySaved, setEnergySaved] = useState(10);
 
-  // Calculations
-  const weeklyVegSavings = vegSwaps * 1.5; // kg
-  const weeklyTransitSavings = transitKm * 0.12; // kg
-  const weeklyEnergySavings = energySaved * 0.80; // kg
+  const weeklyVegSavings = vegSwaps * 1.5;
+  const weeklyTransitSavings = transitKm * 0.12;
+  const weeklyEnergySavings = energySaved * 0.80;
 
   const totalWeeklySavings = weeklyVegSavings + weeklyTransitSavings + weeklyEnergySavings;
-  const annualSavings = totalWeeklySavings * 52; // kg per yr
+  const annualSavings = totalWeeklySavings * 52;
   const annualTreesEquivalent = (annualSavings / 21).toFixed(1);
-  const annualMilesAvoided = (annualSavings / 0.20).toFixed(0);
 
   return (
-    <div className="glass-panel p-6 rounded-2xl space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="card" style={{ padding: 32 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-            <Sliders className="w-5 h-5 text-teal-400" />
-            Interactive Carbon Impact Simulator
-          </h2>
-          <p className="text-xs text-slate-400">Simulate habit changes to see projected annual emissions & tree savings</p>
+          <p className="section-label" style={{ margin: 0 }}>Interactive Simulation</p>
+          <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--dark)', margin: '4px 0 0' }}>Carbon Savings Calculator</h3>
         </div>
         <button
-          onClick={() => {
-            setVegSwaps(3);
-            setTransitKm(30);
-            setEnergySaved(10);
-          }}
-          className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-all text-xs flex items-center gap-1 cursor-pointer"
+          onClick={() => { setVegSwaps(3); setTransitKm(30); setEnergySaved(10); }}
+          className="btn-outline"
+          style={{ fontSize: 11, padding: '6px 12px' }}
         >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Reset Sliders</span>
+          <RefreshCw size={13} /> Reset
         </button>
       </div>
 
-      {/* Sliders Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
         
-        {/* Slider 1: Meal Swaps */}
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-2">
-              <Flame className="w-4 h-4 text-emerald-400" />
-              Veg Meal Swaps
-            </span>
-            <span className="text-xs font-extrabold text-emerald-400 font-mono">{vegSwaps} meals/wk</span>
+        <div style={{ padding: 20, borderRadius: 12, background: 'var(--cream-dark)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+            <span>Veg Meal Swaps</span>
+            <span style={{ color: 'var(--green)' }}>{vegSwaps} / week</span>
           </div>
           <input
             type="range"
@@ -58,19 +44,15 @@ export default function CarbonSimulator() {
             step="1"
             value={vegSwaps}
             onChange={(e) => setVegSwaps(parseInt(e.target.value))}
-            className="w-full accent-emerald-500 cursor-pointer"
+            style={{ width: '100%' }}
           />
-          <p className="text-[11px] text-slate-400">Swap non-veg for plant-based meals (-1.5 kg CO₂ each)</p>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>-1.5 kg CO₂ per swapped meal</div>
         </div>
 
-        {/* Slider 2: Transit Shift */}
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-2">
-              <Car className="w-4 h-4 text-cyan-400" />
-              Bus vs Car Transit
-            </span>
-            <span className="text-xs font-extrabold text-cyan-400 font-mono">{transitKm} km/wk</span>
+        <div style={{ padding: 20, borderRadius: 12, background: 'var(--cream-dark)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+            <span>Bus vs Car Transit</span>
+            <span style={{ color: 'var(--green)' }}>{transitKm} km / week</span>
           </div>
           <input
             type="range"
@@ -79,19 +61,15 @@ export default function CarbonSimulator() {
             step="5"
             value={transitKm}
             onChange={(e) => setTransitKm(parseInt(e.target.value))}
-            className="w-full accent-cyan-500 cursor-pointer"
+            style={{ width: '100%' }}
           />
-          <p className="text-[11px] text-slate-400">Replace solo driving with transit bus (-0.12 kg CO₂/km)</p>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>-0.12 kg CO₂ per bus km</div>
         </div>
 
-        {/* Slider 3: Energy Savings */}
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400" />
-              Electricity Saved
-            </span>
-            <span className="text-xs font-extrabold text-amber-400 font-mono">{energySaved} kWh/wk</span>
+        <div style={{ padding: 20, borderRadius: 12, background: 'var(--cream-dark)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+            <span>Electricity Saved</span>
+            <span style={{ color: 'var(--green)' }}>{energySaved} kWh / week</span>
           </div>
           <input
             type="range"
@@ -100,34 +78,32 @@ export default function CarbonSimulator() {
             step="1"
             value={energySaved}
             onChange={(e) => setEnergySaved(parseInt(e.target.value))}
-            className="w-full accent-amber-500 cursor-pointer"
+            style={{ width: '100%' }}
           />
-          <p className="text-[11px] text-slate-400">Reduce power/AC usage (-0.80 kg CO₂/kWh)</p>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>-0.80 kg CO₂ per kWh</div>
         </div>
 
       </div>
 
-      {/* Projected Impact Output Cards */}
-      <div className="p-5 rounded-xl bg-gradient-to-r from-emerald-950/40 to-teal-950/40 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div style={{ padding: 24, borderRadius: 12, background: 'var(--dark-card)', color: '#FFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            Projected Reduction Impact
-          </span>
-          <div className="flex items-baseline gap-3 mt-1">
-            <span className="text-3xl font-black text-white font-mono">{totalWeeklySavings.toFixed(1)}</span>
-            <span className="text-xs font-bold text-emerald-400">kg CO₂ saved / week</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, color: 'var(--green-light)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+            <Sparkles size={14} /> Projected Reduction
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 4 }}>
+            <span style={{ fontSize: 32, fontWeight: 900 }}>{totalWeeklySavings.toFixed(1)}</span>
+            <span style={{ fontSize: 12, color: 'var(--green-light)' }}>kg CO₂ saved / week</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-6 border-t sm:border-t-0 sm:border-l border-slate-800 pt-3 sm:pt-0 sm:pl-6">
+        <div style={{ display: 'flex', gap: 24, textAlign: 'right' }}>
           <div>
-            <span className="text-[10px] text-slate-400 uppercase font-semibold">Annual CO₂ Saved</span>
-            <p className="text-lg font-bold text-emerald-400 font-mono">{annualSavings.toFixed(0)} kg</p>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', opacity: 0.6 }}>Annual CO₂ Saved</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--green-light)' }}>{annualSavings.toFixed(0)} kg</div>
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 uppercase font-semibold">Tree Equivalent</span>
-            <p className="text-lg font-bold text-teal-300 font-mono">+{annualTreesEquivalent} trees/yr</p>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', opacity: 0.6 }}>Tree Equivalent</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#FFF' }}>+{annualTreesEquivalent} trees/yr</div>
           </div>
         </div>
       </div>

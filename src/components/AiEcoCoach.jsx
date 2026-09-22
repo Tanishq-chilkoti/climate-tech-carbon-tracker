@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, Sparkles, Lightbulb, TrendingDown, ArrowRight, Zap, RefreshCw } from 'lucide-react';
+import { Bot, Lightbulb, ArrowRight, RefreshCw } from 'lucide-react';
 
 export default function AiEcoCoach({ summary, activities }) {
   const [loading, setLoading] = useState(false);
@@ -7,7 +7,7 @@ export default function AiEcoCoach({ summary, activities }) {
 
   if (!summary) return null;
 
-  const { totalCO2, weeklyCO2, weeklyTarget, groupBreakdown } = summary;
+  const { weeklyTarget, groupBreakdown = {} } = summary;
 
   const topGroup = Object.entries(groupBreakdown).sort((a, b) => b[1] - a[1])[0];
   const topCategory = topGroup ? topGroup[0] : 'Transport';
@@ -30,7 +30,7 @@ export default function AiEcoCoach({ summary, activities }) {
     },
     {
       title: 'ISO Mid-Week Pacing Strategy',
-      content: `You have consumed ${summary.budgetConsumedPct}% of your weekly target budget. To stay strictly within your ${weeklyTarget} kg budget, aim to keep daily output below ${(weeklyTarget / 7).toFixed(1)} kg CO₂.`,
+      content: `You have consumed ${summary.budgetConsumedPct || 0}% of your weekly target budget. To stay strictly within your ${weeklyTarget} kg budget, keep daily output below ${(weeklyTarget / 7).toFixed(1)} kg CO₂.`,
       action: 'Set daily reminder to log transport choices.'
     }
   ];
@@ -42,54 +42,42 @@ export default function AiEcoCoach({ summary, activities }) {
     setTimeout(() => {
       setAdviceIndex(prev => prev + 1);
       setLoading(false);
-    }, 300);
+    }, 200);
   };
 
   return (
-    <div className="glass-panel p-6 rounded-2xl border border-emerald-500/30 relative overflow-hidden space-y-4">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-emerald-500/20 flex items-center justify-center">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Bot className="w-5 h-5 text-emerald-400 animate-pulse" />
-            </div>
-          </div>
+    <div className="card-dark" style={{ padding: 28, position: 'relative' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Bot size={22} color="var(--green-light)" />
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-extrabold text-white">AI Carbon Coach & Advisor</h3>
-              <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full">
-                AI Powered
-              </span>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.5)' }}>
+              AI Eco Advisor
             </div>
-            <p className="text-xs text-slate-400">Personalized climate recommendations based on real-time activity analysis</p>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: '#FFF', margin: 0 }}>Smart Carbon Insights</h3>
           </div>
         </div>
-
         <button
           onClick={handleGenerateNextTip}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer shadow-sm"
+          className="btn-outline"
+          style={{ color: '#FFF', borderColor: 'rgba(255,255,255,0.2)', fontSize: 11, padding: '6px 12px' }}
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>New AI Advice</span>
+          <RefreshCw size={13} className={loading ? 'animate-spin' : ''} /> New Tip
         </button>
       </div>
 
-      {/* AI Advice Card */}
-      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
-        <div className="flex items-center gap-2 text-xs font-extrabold text-emerald-400">
-          <Lightbulb className="w-4 h-4 text-amber-400" />
-          <span>{currentTip.title}</span>
+      <div style={{ padding: 20, borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, color: '#FBBF24', fontSize: 14, fontWeight: 800 }}>
+          <Lightbulb size={16} />
+          {currentTip.title}
         </div>
-        <p className="text-xs text-slate-200 leading-relaxed">
+        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.5, margin: '0 0 12px' }}>
           {currentTip.content}
         </p>
-        <div className="pt-2 border-t border-slate-800 flex items-center gap-2 text-[11px] font-semibold text-teal-300">
-          <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Recommended Action: {currentTip.action}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, color: 'var(--green-light)' }}>
+          <ArrowRight size={13} />
+          {currentTip.action}
         </div>
       </div>
     </div>
