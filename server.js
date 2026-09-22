@@ -125,8 +125,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     track: 'CLIMATE TECH',
-    appName: 'Carbon Footprint Tracker',
-    hackathonId: 'CT-2026-TRACKER'
+    appName: 'Carbon Footprint Tracker'
   });
 });
 

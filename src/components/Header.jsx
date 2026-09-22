@@ -9,7 +9,11 @@ import {
   PlusCircle, 
   History, 
   Award,
-  Sparkles
+  Bot,
+  Globe,
+  Compass,
+  Zap,
+  Utensils
 } from 'lucide-react';
 
 export default function Header({ 
@@ -47,10 +51,7 @@ export default function Header({
                 </span>
               </div>
               <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
-                <span>Hackathon ID:</span>
-                <code className="text-emerald-300 font-mono bg-slate-900/90 px-1.5 py-0.5 rounded text-[11px] border border-slate-800">
-                  CT-2026-TRACKER
-                </code>
+                <span>Carbon Footprint Tracker Platform</span>
               </p>
             </div>
           </div>
@@ -72,7 +73,7 @@ export default function Header({
           <div className="flex items-center gap-2 w-full md:w-auto justify-end">
             <button
               onClick={onExportCSV}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition-all hover:text-white"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition-all hover:text-white cursor-pointer"
               title="Export Logged Activities to CSV"
             >
               <Download className="w-3.5 h-3.5 text-cyan-400" />
@@ -81,7 +82,7 @@ export default function Header({
 
             <button
               onClick={onOpenDecisions}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition-all hover:text-white"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition-all hover:text-white cursor-pointer"
               title="View Decision Points (DP1, DP2, DP3)"
             >
               <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
@@ -90,8 +91,8 @@ export default function Header({
 
             <button
               onClick={onOpenApiDocs}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-950/50 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-700/60 transition-all shadow-sm shadow-emerald-950/50"
-              title="Standard REST API Endpoints & Interactive Tester"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-950/50 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-700/60 transition-all shadow-sm shadow-emerald-950/50 cursor-pointer"
+              title="Standard REST API Endpoints & Interactive Sandbox"
             >
               <Code2 className="w-3.5 h-3.5 text-emerald-400" />
               <span>Standard API</span>
@@ -99,7 +100,7 @@ export default function Header({
 
             <button
               onClick={onResetData}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-all cursor-pointer"
               title="Reset dataset to default state"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -108,13 +109,17 @@ export default function Header({
 
         </div>
 
-        {/* Bottom Navigation Tabs */}
+        {/* Bottom Navigation Tabs Toolbar */}
         <div className="flex items-center gap-2 pt-2 border-t border-slate-800/60 overflow-x-auto">
           {[
-            { id: 'dashboard', label: 'Dashboard & Charts', icon: BarChart3 },
-            { id: 'logger', label: 'Log Activity', icon: PlusCircle },
-            { id: 'history', label: 'History & Filters', icon: History },
-            { id: 'achievements', label: 'Eco Badges & Goals', icon: Award }
+            { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+            { id: 'logger', label: 'Log Entry', icon: PlusCircle },
+            { id: 'history', label: 'History', icon: History },
+            { id: 'routes', label: 'Route Tool', icon: Compass },
+            { id: 'power', label: 'Appliance Power', icon: Zap },
+            { id: 'meals', label: 'Meal Planner', icon: Utensils },
+            { id: 'coach', label: 'AI Advisor', icon: Bot },
+            { id: 'benchmarks', label: 'Badges & Goals', icon: Award }
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -122,7 +127,7 @@ export default function Header({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/20 ring-1 ring-emerald-400/30'
                     : 'bg-slate-900/60 hover:bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-800/60'
