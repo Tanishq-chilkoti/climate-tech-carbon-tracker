@@ -211,6 +211,38 @@ app.post('/api/activities', (req, res) => {
   });
 });
 
+// PUT /api/activities/:id - Edit logged activity
+app.put('/api/activities/:id', (req, res) => {
+  const { id } = req.params;
+  const { type, quantity, date, notes } = req.body;
+  const index = activities.findIndex(a => a.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, error: 'Activity not found' });
+  }
+
+  const qty = parseFloat(quantity);
+  if (isNaN(qty) || qty <= 0) {
+    return res.status(400).json({ success: false, error: 'Quantity must be a positive number' });
+  }
+
+  // Recalculate CO2 — use known factors or keep existing factor
+  const factor = EMISSION_FACTORS[type] ? EMISSION_FACTORS[type].factor : (activities[index].co2_kg / activities[index].quantity);
+  const co2_kg = parseFloat((qty * factor).toFixed(2));
+
+  activities[index] = {
+    ...activities[index],
+    type: type || activities[index].type,
+    quantity: qty,
+    co2_kg,
+    date: date || activities[index].date,
+    notes: notes !== undefined ? notes : activities[index].notes,
+    updatedAt: new Date().toISOString()
+  };
+
+  res.json({ success: true, message: 'Activity updated successfully', data: activities[index] });
+});
+
 // DELETE /api/activities/:id - Delete logged activity
 app.delete('/api/activities/:id', (req, res) => {
   const { id } = req.params;

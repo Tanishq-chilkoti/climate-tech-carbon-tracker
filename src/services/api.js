@@ -46,6 +46,18 @@ export async function deleteActivity(id) {
   return data;
 }
 
+export async function editActivity(id, activityData) {
+  const res = await fetch(`${API_BASE}/activities/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(activityData)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to update activity');
+  return data;
+}
+
+
 export async function fetchWeeklyTarget() {
   const res = await fetch(`${API_BASE}/target`);
   if (!res.ok) throw new Error('Failed to fetch target');

@@ -14,6 +14,7 @@ import ApplianceEstimator from './components/ApplianceEstimator';
 import TransportCalculator from './components/TransportCalculator';
 import ApiDocsModal from './components/ApiDocsModal';
 import DecisionsModal from './components/DecisionsModal';
+import LandingHero from './components/LandingHero';
 import { 
   fetchSummary, 
   fetchActivities, 
@@ -30,6 +31,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [toastMessage, setToastMessage] = useState('');
+  const [showLanding, setShowLanding] = useState(() => {
+    // Only show landing on very first visit; skip if user has been here before
+    return !localStorage.getItem('ct_visited');
+  });
 
   // Modals state
   const [isApiModalOpen, setIsApiModalOpen] = useState(false);
@@ -134,6 +139,20 @@ export default function App() {
     document.body.removeChild(link);
     showToast('Exported activity logs to CSV');
   };
+
+  // Show landing hero on first visit
+  if (showLanding) {
+    return (
+      <LandingHero
+        weeklyCO2={summary ? summary.weeklyCO2 : 0}
+        totalCO2={summary ? summary.totalCO2 : 0}
+        onEnter={() => {
+          localStorage.setItem('ct_visited', '1');
+          setShowLanding(false);
+        }}
+      />
+    );
+  }
 
   if (loading) {
     return (

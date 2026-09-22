@@ -2,49 +2,141 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS Custom Properties (light / dark) ── */
+:root {
+  --bg-primary: #020617;       /* slate-950 */
+  --bg-secondary: #0f172a;     /* slate-900 */
+  --bg-card: rgba(15,23,42,0.8);
+  --border-color: rgba(51,65,85,0.6);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --glow-green: rgba(16,185,129,0.08);
+  --glow-teal: rgba(20,184,166,0.05);
+  color-scheme: dark;
+}
+
+html.light {
+  --bg-primary: #f0fdf4;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255,255,255,0.85);
+  --border-color: rgba(16,185,129,0.25);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --glow-green: rgba(16,185,129,0.06);
+  --glow-teal: rgba(20,184,166,0.04);
+  color-scheme: light;
+}
+
 @layer base {
   body {
-    @apply font-sans bg-slate-950 text-slate-100 antialiased overflow-x-hidden;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.05) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.8) 0px, transparent 100%);
-    background-attachment: fixed;
+    @apply font-sans antialiased overflow-x-hidden;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-image:
+      radial-gradient(at 0% 0%, var(--glow-green) 0, transparent 60%),
+      radial-gradient(at 100% 100%, var(--glow-teal) 0, transparent 60%);
+    min-height: 100vh;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+  }
+
+  /* Range slider */
+  input[type="range"] {
+    @apply w-full h-1.5 rounded-full appearance-none cursor-pointer;
+    background: linear-gradient(to right, #10b981, #14b8a6);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-4 h-4 rounded-full bg-emerald-400 shadow-lg border-2 border-slate-950 cursor-pointer;
   }
 }
 
-/* Glassmorphic card styling */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
+@layer components {
 
-.glass-panel-hover {
-  @apply transition-all duration-300 hover:border-emerald-500/30 hover:shadow-emerald-500/10 hover:shadow-lg;
-}
+  /* Glass card — adapts per theme */
+  .glass-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+  /* Light-mode overrides for glass */
+  html.light .glass-panel {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
 
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-}
+  /* Glow on interactive cards */
+  .hover-glow {
+    @apply transition-all duration-200;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 0 0 1px rgba(16,185,129,0.3), 0 4px 20px rgba(16,185,129,0.1);
+  }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.3);
-  border-radius: 9999px;
-}
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background: rgba(100,116,139,0.4);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.7); }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.6);
+  /* Pulse dot */
+  .live-dot {
+    @apply inline-block w-2 h-2 rounded-full bg-emerald-400;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.4; transform:scale(0.7); }
+  }
+
+  /* Confetti canvas overlay */
+  #confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Streak badge */
+  .streak-badge {
+    @apply flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: white;
+    animation: streak-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes streak-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(249,115,22,0); }
+  }
+
+  /* Offset tip panel */
+  .offset-tip {
+    animation: slide-up 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes slide-up {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Mobile bottom nav */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around px-2 py-2;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Number counter animation */
+  .count-up {
+    display: inline-block;
+    transition: transform 0.1s;
+  }
 }
