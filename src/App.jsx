@@ -31,10 +31,8 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [toastMessage, setToastMessage] = useState('');
-  const [showLanding, setShowLanding] = useState(() => {
-    // Only show landing on very first visit; skip if user has been here before
-    return !localStorage.getItem('ct_visited');
-  });
+  // Always show landing — user clicks "Start tracking" to enter the app
+  const [showLanding, setShowLanding] = useState(true);
 
   // Modals state
   const [isApiModalOpen, setIsApiModalOpen] = useState(false);
@@ -140,19 +138,24 @@ export default function App() {
     showToast('Exported activity logs to CSV');
   };
 
-  // Show landing hero on first visit
+  // Show landing hero — wait until data is loaded so CO2 values are real
   if (showLanding) {
+    // Override body background to cream while landing is visible
+    document.body.style.backgroundColor = '#EDE8DC';
     return (
       <LandingHero
         weeklyCO2={summary ? summary.weeklyCO2 : 0}
         totalCO2={summary ? summary.totalCO2 : 0}
+        loading={loading}
         onEnter={() => {
-          localStorage.setItem('ct_visited', '1');
+          document.body.style.backgroundColor = ''; // restore dark
           setShowLanding(false);
         }}
       />
     );
   }
+  // Restore dark body when in app
+  document.body.style.backgroundColor = '';
 
   if (loading) {
     return (
